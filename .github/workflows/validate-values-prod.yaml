@@ -21,8 +21,8 @@ jobs:
           VIOLATIONS=""
 
           for KEY in $FORBIDDEN_KEYS; do
-            if echo "$DIFF" | grep -qE "^\+${KEY}:"; then
-              VIOLATIONS="${VIOLATIONS}- '${KEY}' top-level key added\n"
+            if echo "$DIFF" | grep -qE "^\+\s*${KEY}\s*:"; then
+              VIOLATIONS="${VIOLATIONS}- '${KEY}' key added\n"
             fi
           done
 
