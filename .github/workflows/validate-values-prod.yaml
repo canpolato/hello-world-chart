@@ -1,0 +1,38 @@
+name: Validate values-prod.yaml
+
+on:
+  pull_request:
+
+env:
+  FORBIDDEN_KEYS: "image istioAuthorizationPolicy"
+
+jobs:
+  check-forbidden-keys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for forbidden keys in values-prod.yaml diff
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- helm-charts/hello-world/values-prod.yaml | grep '^+' | grep -v '^+++' || true)
+
+          VIOLATIONS=""
+
+          for KEY in $FORBIDDEN_KEYS; do
+            if echo "$DIFF" | grep -qE "^\+${KEY}:"; then
+              VIOLATIONS="${VIOLATIONS}- '${KEY}' top-level key added\n"
+            fi
+          done
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "::error::Forbidden keys detected in values-prod.yaml"
+            echo ""
+            echo "The following violations were found in values-prod.yaml:"
+            echo -e "$VIOLATIONS"
+            echo "Adding these keys to values-prod.yaml is not allowed."
+            exit 1
+          fi
+
+          echo "values-prod.yaml validation passed."
