@@ -12,10 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Check for forbidden keys in values-prod.yaml diff
         run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
           DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- helm-charts/hello-world/values-prod.yaml | grep '^+' | grep -v '^+++' || true)
 
           VIOLATIONS=""
