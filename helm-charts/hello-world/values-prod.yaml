@@ -1,8 +1,4 @@
 replicaCount: 3
-image:
-  repository: canpolatoral/hello-world
-  pullPolicy: IfNotPresent
-  tag: 'latest'
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
