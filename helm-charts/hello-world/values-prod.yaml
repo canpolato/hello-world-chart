@@ -1,3 +1,5 @@
+canpolat:
+  image: a
 replicaCount: 3
 imagePullSecrets: []
 nameOverride: ''
