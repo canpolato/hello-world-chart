@@ -1,0 +1,46 @@
+image:
+  repository: canpolatoral/hello-world
+  pullPolicy: IfNotPresent
+  tag: b79404674032f9b4f424637b027b20f39293dd6c
+
+istioAuthorizationPolicy:
+  enabled: true
+
+  action: ALLOW
+
+  selector:
+    matchLabels:
+      app: hello-world
+
+  rules:
+    - to:
+        - operation:
+            methods: ["GET"]
+            paths:
+              - "/"
+              - "/health"
+              - "/ready"
+              - "/api/v1/account/*"
+      when:
+        - key: request.auth.claims[azp]
+          values: ["mobile-app"]
+
+    - to:
+        - operation:
+            methods: ["POST"]
+            paths:
+              - "/api/v1/transfer"
+              - "/api/v1/transfer/*"
+      when:
+        - key: request.auth.claims[azp]
+          values: ["payments-service"]
+
+    - to:
+        - operation:
+            methods: ["GET", "POST", "PUT", "DELETE"]
+            paths:
+              - "/admin"
+              - "/admin/*"
+      when:
+        - key: request.auth.claims[azp]
+          values: ["admin-portal"]
