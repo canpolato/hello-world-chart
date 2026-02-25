@@ -23,7 +23,7 @@ istioAuthorizationPolicy:
               - "/api/v1/account/*"
       when:
         - key: request.auth.claims[azp]
-          values: ["mobile-app"]
+          values: ["mobile-app-1"]
 
     - to:
         - operation:
